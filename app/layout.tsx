@@ -9,6 +9,16 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@radix-ui/react-separator";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
+import {
+  Field,
+} from "@/components/ui/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,28 +49,46 @@ export default function RootLayout({
             <AppSidebar />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2">
-                <div className="flex items-center gap-2 px-4">
+                <div className="flex items-center gap-2 px-4 w-full">
                   <SidebarTrigger className="-ml-1" />
                   <Separator
                     orientation="vertical"
                     className="mr-2 data-[orientation=vertical]:h-4"
                   />
-                  <Breadcrumb>
-                    <BreadcrumbList>
-                      <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink href="#">
-                          Building Your Application
-                        </BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator className="hidden md:block" />
-                      <BreadcrumbItem>
-                        <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </BreadcrumbList>
-                  </Breadcrumb>
+                  <div className="flex justify-between w-full items-center">
+                    <div>
+                      <Breadcrumb>
+                        <BreadcrumbList>
+                          <BreadcrumbItem className="hidden md:block">
+                            <BreadcrumbLink href="/dashboard">
+                              Amicolor
+                            </BreadcrumbLink>
+                          </BreadcrumbItem>
+                          <BreadcrumbSeparator className="hidden md:block" />
+                          <BreadcrumbItem>
+                            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                          </BreadcrumbItem>
+                        </BreadcrumbList>
+                      </Breadcrumb>
+                    </div>
+                    <div className="me-5">
+                      <Field>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Analytics Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="district">District</SelectItem>
+                            <SelectItem value="school">School</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    </div>
+                  </div>
+
                 </div>
               </header>
-              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 ITSMY">
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 ITSMY mt-5">
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="system"
