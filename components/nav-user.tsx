@@ -5,6 +5,8 @@ import {
   Bell,
   ChevronsUpDown,
   LogOut,
+  Moon,
+  Sun
 } from "lucide-react"
 
 import {
@@ -85,6 +87,11 @@ export function NavUser({
               <DropdownMenuItem>
                 <Bell />
                 Notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Moon />
+                {/* <Sun /> */}
+                Dark Mode
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -96,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton className="mt-10" size="lg" asChild>
               <a href="#">
                 <Image src={'./images/logo.svg'} alt="Amicolor" width={210} height={70}/>
               </a>
@@ -104,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="mt-10">
+      <SidebarContent className="mt-6">
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
