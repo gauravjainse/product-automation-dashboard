@@ -15,7 +15,7 @@ import ProductSyncGauge from "@/components/charts/ProductSyncGauge";
 import FundRaisingMeter from "@/components/charts/FundRaisingMeter";
 import RegisteredSchools from "@/components/charts/RegisteredSchools";
 import RevenueDonut from "@/components/charts/RevenueDonut";
-import StraightAnglePieChart from "@/components/charts/StraightAnglePieChart";
+
 import { MoveUp, Search } from "lucide-react";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
