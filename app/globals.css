@@ -151,9 +151,11 @@
   text-decoration: line-through;
 }
 .amicolor-process-list li.active {
-  color: #3B5BFF
+  color: #771cff
 }
-
+.theme-generate [data-slot="progress-indicator"] {
+  background-color: #771cff
+}
 .circle {
     position: relative;
     width: 180px;
@@ -187,6 +189,17 @@
   @keyframes fill {
   from { --progress: 0; }
   to { --progress: 52; }
+}
+
+button {
+  /* min-height: 45px; */
+  cursor: pointer;
+}
+
+.ac-step-trigger > svg {
+    width: 30px;
+    height: 30px;
+    color: var(--primary);
 }
 
 .circle {
