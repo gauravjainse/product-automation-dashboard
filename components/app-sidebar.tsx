@@ -10,8 +10,10 @@ import {
   Map,
   PieChart,
   Send,
+  Settings,
   Settings2,
   SquareTerminal,
+  Users,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -28,6 +30,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Image from "next/image";
+import Link from "next/link"
 
 const data = {
   user: {
@@ -62,15 +65,9 @@ const data = {
       ],
     },
     {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings2,
-      items: [
-        {
-          title: "Profile",
-          url: "/profile",
-        }
-      ],
+      title: "Users",
+      url: "/users",
+      icon: Users,
     },
   ],
   navSecondary: [
@@ -97,9 +94,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton className="mt-10" size="lg" asChild>
-              <a href="#">
+              <Link href={'/'}>
                 <Image src={'./images/logo.svg'} alt="Amicolor" width={210} height={70}/>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
