@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
+  Laptop,
   LogOut,
   Moon,
   Sun
@@ -30,6 +31,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+import { useTheme } from "next-themes"
+
 export function NavUser({
   user,
 }: {
@@ -40,6 +43,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { setTheme, theme } = useTheme()
 
   return (
     <SidebarMenu>
@@ -80,24 +84,27 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem className="cursor-pointer">
+                <BadgeCheck />Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem className="cursor-pointer">
+                <Bell />Notifications
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Moon />
-                {/* <Sun /> */}
-                Dark Mode
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme( theme=="light"?"dark":"light" ) }>
+                {
+                  theme == 'dark'? (
+                    <><Sun />Light Mode</>
+                  ) :(
+                    <><Moon />Dark Mode</>
+                  )}
+                </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
+                <Laptop />System Mode
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem className="cursor-pointer">
+              <LogOut />Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

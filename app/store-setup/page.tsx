@@ -58,6 +58,15 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 
+import {
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectGroup,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from "@/components/ui/multi-select";
+
 // Form
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
@@ -65,7 +74,7 @@ import { toast } from "sonner"
 import * as z from "zod"
 // End Form
 
-import { ArrowRightIcon, Building, Circle, CircleCheck, Currency, Download, GraduationCap, Heart, Minus, Plus, School, Search, ShoppingBag, UploadCloud, User, X } from "lucide-react";
+import { ArrowRightIcon, Box, Building, Circle, CircleCheck, Currency, Download, GraduationCap, Heart, Minus, Plus, School, Search, ShoppingBag, UploadCloud, User, X, Check, ChevronsUpDown } from "lucide-react";
 
 import {
   Accordion,
@@ -94,30 +103,31 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 // Form
 const storeTypes = [
   {
     id: "district",
-    title: "District",
+    label: "District",
+    value: "district",
   },
   {
     id: "school",
-    title: "School",
+    label: "School",
+    value: "school",
+  },
+  {
+    id: "organization",
+    label: "Organization",
+    value: "organization",
   },
 ] as const
 // End Form
-
-// const formSchema = z.object({
-//     storeType: z
-//     .string({
-//       required_error: "Please select a store type",
-//     })
-//     .min(1, "Please select a subscription plan")
-//     .refine((value) => value === "basic" || value === "pro", {
-//       message: "Invalid plan selection. Please choose Basic or Pro",
-//     })
-// })
 
 const schools = [
   {
@@ -168,15 +178,43 @@ const districts = [
 ]
 
 export default function Page() {
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState("")
     const [searchValue, setSearchValue] = useState("");
     const [primaryColor, setPrimaryColor] = useState("#c559ff");
     const [secondaryColor, setSecondaryColor] = useState('#5a00ce');
     const [naturalColors, setNaturalColors] = useState([
-        {id:"natural-1","value":"#000000"},
-        {id:"natural-2","value":"#FFFFFF"},
-        {id:"natural-3","value":"#979797"},
-        {id:"natural-4","value":"#333333"},
-        {id:"natural-5","value":"#5d5d5d"},
+        { id: "c1", name: "Black Heather", value: "#2d2d2d" },
+        { id: "c2", name: "Carolina Blue Heather", value: "#6f9dbd" },
+        { id: "c3", name: "Deep Orange Heather", value: "#df7b47" },
+        { id: "c4", name: "Deep Red Heather", value: "#a84b4b" },
+        { id: "c5", name: "Kelly Heather", value: "#4b7552" },
+        { id: "c6", name: "Metal Grey Heather", value: "#5e5e5e" },
+        { id: "c7", name: "Olive Drab Green Heather", value: "#5a5d47" },
+        { id: "c8", name: "Team Purple Heather", value: "#6c5d8b" },
+        { id: "c9", name: "True Navy Heather", value: "#38455b" },
+        { id: "c10", name: "True Royal Heather", value: "#4468b2" },
+        { id: "c11", name: "Turquoise Heather", value: "#5ca6be" },
+        { id: "c12", name: "Vintage Athletic Maroon", value: "#64373e" },
+        { id: "c13", name: "Vintage Forest Green", value: "#344b3a" },
+        { id: "c14", name: "Vintage Sapphire", value: "#2f5073" },
+    ]);
+
+    const [primaryColors, setPrimaryColors] = useState([
+        { id: "c1", name: "Black Heather", value: "#2d2d2d" },
+        { id: "c2", name: "Carolina Blue Heather", value: "#6f9dbd" },
+        { id: "c3", name: "Deep Orange Heather", value: "#df7b47" },
+        { id: "c4", name: "Deep Red Heather", value: "#a84b4b" },
+        { id: "c5", name: "Kelly Heather", value: "#4b7552" },
+        { id: "c6", name: "Metal Grey Heather", value: "#5e5e5e" },
+        { id: "c7", name: "Olive Drab Green Heather", value: "#5a5d47" },
+        { id: "c8", name: "Team Purple Heather", value: "#6c5d8b" },
+        { id: "c9", name: "True Navy Heather", value: "#38455b" },
+        { id: "c10", name: "True Royal Heather", value: "#4468b2" },
+        { id: "c11", name: "Turquoise Heather", value: "#5ca6be" },
+        { id: "c12", name: "Vintage Athletic Maroon", value: "#64373e" },
+        { id: "c13", name: "Vintage Forest Green", value: "#344b3a" },
+        { id: "c14", name: "Vintage Sapphire", value: "#2f5073" },
     ]);
 
     const isPrimaryDark = Color(primaryColor).isDark();
@@ -186,7 +224,7 @@ export default function Page() {
     const productLogoRef = useRef<HTMLInputElement | null>(null);
     
     const [storeLogoFile, setStoreLogoFile] = useState<File | null>(null);
-    const [productLogoFile, setProductLogoFile] = useState<File | null>(null);
+    const [productLogoFiles, setProductLogoFiles] = useState<File[]>([]);
 
     const [storeLogoPreview, setStoreLogoPreview] = useState<string | null>(null);
     const [productLogoPreview, setProductLogoPreview] = useState<string | null>(null);
@@ -198,19 +236,19 @@ export default function Page() {
     }
 
     const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>, logoType:string) => {
-        const selectedFile = event.target.files?.[0];
+        const selectedFiles = Array.from(event.target.files || []);
 
-        console.log('selectedFile', selectedFile)
+        console.log('selectedFile', event.target.files)
         console.log('logoType', logoType)
 
-        if(selectedFile) {
+        if(selectedFiles) {
             if (logoType == 'store'){
-                setStoreLogoFile(selectedFile)
-                setStoreLogoPreview(URL.createObjectURL(selectedFile));
+                setStoreLogoFile(selectedFiles?.[0])
+                setStoreLogoPreview(URL.createObjectURL(selectedFiles?.[0]));
                 // console.log('SelectedFile', selectedFile)
             } else {
-                setProductLogoFile(selectedFile)
-                setProductLogoPreview(URL.createObjectURL(selectedFile));
+                setProductLogoFiles( selectedFiles )
+                setProductLogoPreview(URL.createObjectURL(selectedFiles?.[0]));
                 // console.log('SelectedFile', selectedFile)
             }
                 
@@ -225,7 +263,7 @@ export default function Page() {
 
             if(storeLogoRef.current) storeLogoRef.current.value = '';
         } else {
-            setProductLogoFile(null);
+            setProductLogoFiles([]);
             setProductLogoPreview(null);
 
             if(productLogoRef.current) productLogoRef.current.value = '';
@@ -340,6 +378,9 @@ export default function Page() {
                         storetype: z
                             .string()
                             .min(6, "Store type should either be District or School"),
+                        linkeddistrict: z
+                            .string()
+                            .optional(),
                         authtoken: z
                             .string()
                             .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
@@ -353,30 +394,19 @@ export default function Page() {
             storeurl: "",
             storetype: "district",
             authtoken: "",
+            linkeddistrict: ""
         },
     })
 
     function onSubmit(data: z.infer<typeof formSchema>) {
         console.log('onSubmit', data)
-        toast("You submitted the following values:", {
-            description: (
-                <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-                    <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-            position: "bottom-right",
-            classNames: {
-                content: "flex flex-col gap-2",
-            },
-            style: {
-                "--border-radius": "calc(var(--radius)  + 4px)",
-            } as React.CSSProperties,
-        })
+
+        toast(`${data.storename} ${data.storetype} store has been connected`)
     }
 
     return (
         <div>
-            {/* Step 1 */}
+            {/* Step 1 - Store Connect */}
             <div className="ac-setup ac-step-1">
                 <Card className="py-2">
                     <Accordion
@@ -472,33 +502,28 @@ export default function Page() {
                                                                     <FieldSet data-invalid={isInvalid}>
                                                                         <FieldLegend variant="label">Store Type</FieldLegend>
                                                                         <RadioGroup
-                                                                        name={field.name}
-                                                                        value={field.value}
-                                                                        onValueChange={field.onChange}
-                                                                        aria-invalid={isInvalid}
+                                                                            name={field.name}
+                                                                            value={field.value}
+                                                                            onValueChange={field.onChange}
+                                                                            aria-invalid={isInvalid}
+                                                                            className="flex flex-row justify-center items-center"
                                                                         >
-                                                                        <FieldLabel htmlFor="form-rhf-complex-district">
-                                                                            <Field orientation="horizontal">
-                                                                                <FieldContent>
-                                                                                    <FieldTitle>District</FieldTitle>
-                                                                                </FieldContent>
-                                                                                <RadioGroupItem
-                                                                                    value="district"
-                                                                                    id="form-rhf-complex-district"
-                                                                                />
-                                                                            </Field>
-                                                                        </FieldLabel>
-                                                                        <FieldLabel htmlFor="form-rhf-complex-school">
-                                                                            <Field orientation="horizontal">
-                                                                            <FieldContent>
-                                                                                <FieldTitle>School</FieldTitle>
-                                                                            </FieldContent>
-                                                                            <RadioGroupItem
-                                                                                value="school"
-                                                                                id="form-rhf-complex-school"
-                                                                            />
-                                                                            </Field>
-                                                                        </FieldLabel>
+                                                                        {storeTypes.map((storeTypes)=>(
+                                                                            <FieldLabel htmlFor={storeTypes.id}>
+                                                                                <Field orientation="horizontal">
+                                                                                    <FieldContent>
+                                                                                        <FieldTitle>{storeTypes.label}</FieldTitle>
+                                                                                    </FieldContent>
+                                                                                    <RadioGroupItem
+                                                                                        style={{width:"15px", height: "15px", top: "1px"}}
+                                                                                        value={storeTypes.value}
+                                                                                        id={storeTypes.id}
+                                                                                        className="relative"
+                                                                                    />
+                                                                                </Field>
+                                                                            </FieldLabel>
+                                                                        ))}
+
                                                                         </RadioGroup>
                                                                         {isInvalid && <FieldError errors={[fieldState.error]} />}
                                                                     </FieldSet>
@@ -507,6 +532,73 @@ export default function Page() {
                                                                 />
                                                             </FieldGroup>
                                                             
+                                                            {form.watch("storetype") === "school" && (
+                                                                <div className={`transition-all duration-300 overflow-hidden ${form.watch("storetype") === "school" ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
+                                                                    <FieldGroup>
+                                                                        <Controller
+                                                                        name="linkeddistrict"
+                                                                        control={form.control}
+                                                                        render={({ field, fieldState }) => (
+                                                                            <Field data-invalid={fieldState.invalid}>
+                                                                            <FieldLabel htmlFor="amicolor-linked-district">
+                                                                                Linked District
+                                                                            </FieldLabel>
+                                                                            <Popover open={open} onOpenChange={setOpen}>
+                                                                                <PopoverTrigger asChild>
+                                                                                    <Button
+                                                                                    variant="outline"
+                                                                                    role="combobox"
+                                                                                    aria-expanded={open}
+                                                                                    className="justify-between"
+                                                                                    >
+                                                                                    {value
+                                                                                        ? (
+                                                                                            districts.find((district) => district.name === value)?.name
+                                                                                        ): (
+                                                                                            <div className="opacity-50">Select district</div>
+                                                                                        )
+                                                                                    }
+                                                                                    <ChevronsUpDown className="opacity-50" />
+                                                                                    </Button>
+                                                                                </PopoverTrigger>
+                                                                                <PopoverContent className="p-0 w-full">
+                                                                                    <Command>
+                                                                                    <CommandInput placeholder="Search District" className="h-9" />
+                                                                                    <CommandList className="w-[450px] max-w-full">
+                                                                                        <CommandEmpty>No district found.</CommandEmpty>
+                                                                                        <CommandGroup>
+                                                                                        {districts.map((district) => (
+                                                                                            <CommandItem
+                                                                                            key={district.id}
+                                                                                            value={district.name}
+                                                                                            id="amicolor-linked-district"
+                                                                                            onSelect={(currentValue) => {
+                                                                                                setValue(currentValue === value ? "" : currentValue)
+                                                                                                setOpen(false)
+                                                                                            }}
+                                                                                            >
+                                                                                            {district.name}
+                                                                                            <Check
+                                                                                                className={`ml-auto ${value === district.name ? "opacity-100" : "opacity-0"}`}
+                                                                                            />
+                                                                                            </CommandItem>
+                                                                                        ))}
+                                                                                        </CommandGroup>
+                                                                                    </CommandList>
+                                                                                    </Command>
+                                                                                </PopoverContent>
+                                                                            </Popover>
+
+
+                                                                            {fieldState.invalid && (
+                                                                                <FieldError errors={[fieldState.error]} />
+                                                                            )}
+                                                                            </Field>
+                                                                        )}
+                                                                        />
+                                                                    </FieldGroup>
+                                                                </div>
+                                                            )}
                                                             <FieldGroup>
                                                                 <Controller
                                                                 name="authtoken"
@@ -530,80 +622,22 @@ export default function Page() {
                                                                 )}
                                                                 />
                                                             </FieldGroup>
-                                                            
 
                                                             <Field orientation="horizontal">
-                                                            <Button type="button" variant="outline" onClick={() => form.reset()}>
-                                                                Reset
-                                                            </Button>
-                                                            <Button type="submit" form="form-rhf-input">
-                                                                Save
-                                                            </Button>
+                                                                <Button type="button" variant="outline" onClick={() => form.reset()}>
+                                                                    Reset
+                                                                </Button>
+                                                                <Button type="submit" form="form-rhf-input">
+                                                                    Save
+                                                                </Button>
                                                             </Field>
                                                         </DialogContent>
                                                     </form>
                                                 </Dialog>
                                             </div>
                                         </EmptyContent>
-                                        
-                                        </Empty>
+                                    </Empty>
                                 </CardContent>
-
-                                {/* <form id="form-rhf-complex" >
-                                    <FieldGroup>
-                                        <Controller
-                                        name="storeType"
-                                        control={form.control}
-                                        render={({ field, fieldState }) => {
-                                            const isInvalid = fieldState.invalid
-                                            return (
-                                            <FieldSet data-invalid={isInvalid}>
-                                                <FieldLegend variant="label">Subscription Plan</FieldLegend>
-                                                <FieldDescription>
-                                                Choose your subscription plan.
-                                                </FieldDescription>
-                                                <RadioGroup
-                                                name={field.name}
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                aria-invalid={isInvalid}
-                                                >
-                                                <FieldLabel htmlFor="form-rhf-complex-basic">
-                                                    <Field orientation="horizontal">
-                                                    <FieldContent>
-                                                        <FieldTitle>Basic</FieldTitle>
-                                                        <FieldDescription>
-                                                        For individuals and small teams
-                                                        </FieldDescription>
-                                                    </FieldContent>
-                                                    <RadioGroupItem
-                                                        value="basic"
-                                                        id="form-rhf-complex-basic"
-                                                    />
-                                                    </Field>
-                                                </FieldLabel>
-                                                <FieldLabel htmlFor="form-rhf-complex-pro">
-                                                    <Field orientation="horizontal">
-                                                    <FieldContent>
-                                                        <FieldTitle>Pro</FieldTitle>
-                                                        <FieldDescription>
-                                                        For businesses with higher demands
-                                                        </FieldDescription>
-                                                    </FieldContent>
-                                                    <RadioGroupItem
-                                                        value="pro"
-                                                        id="form-rhf-complex-pro"
-                                                    />
-                                                    </Field>
-                                                </FieldLabel>
-                                                </RadioGroup>
-                                                {isInvalid && <FieldError errors={[fieldState.error]} />}
-                                            </FieldSet>
-                                            )
-                                        }}
-                                        />
-                                    </FieldGroup>
-                                </form> */}
 
                                 <CardContent className="mt-5">
                                     <Command>
@@ -639,7 +673,7 @@ export default function Page() {
                 </Card>
             </div>
             
-            {/* Step 2 */}
+            {/* Step 2 - Store Logo and Color Filtering */}
             <div className="ac-setup ac-step-2 mt-7">
                 <Card className="py-2">
                     <Accordion
@@ -678,8 +712,8 @@ export default function Page() {
                                                     }}
                                                     className="absolute top-2 right-2 bg-black/60 text-white p-1 rounded-full hover:bg-black/80 transition cursor-pointer"
                                                 >
-                                                <X size={14} />
-                                            </button>
+                                                    <X size={14} />
+                                                </button>
                                         </div>
                                         ):(
                                             <div className="flex flex-col text-center justify-center items-center gap-1 cursor-pointer">
@@ -691,7 +725,7 @@ export default function Page() {
                                     </div>
                                     <div className="grid auto-rows-min gap-2 md:grid-cols-3 mt-10">
                                         <div className="amicolor-primary amicolor-col">
-                                            <CardTitle className="text-xl">Primary Color</CardTitle>
+                                            <CardTitle className="text-xl">Store Color</CardTitle>
                                             <div className="flex mt-5 gap-4">
                                                 <div>
                                                     <ColorPicker
@@ -728,7 +762,7 @@ export default function Page() {
                                         </div>
 
                                         <div className="amicolor-primary amicolor-col">
-                                            <CardTitle className="text-xl">Secondary Color</CardTitle>
+                                            <CardTitle className="text-xl">Secondary Store Color</CardTitle>
                                             <div className="flex mt-5 gap-4">
                                                 <div>
                                                     <ColorPicker
@@ -765,31 +799,46 @@ export default function Page() {
                                         </div>
 
                                         <div className="amicolor-natural w-full">
-                                            <CardTitle className="text-xl">Natural Color</CardTitle>
+                                            <CardTitle className="text-xl">Swatch Colors</CardTitle>
                                             <div className="flex gap-5 mt-5 flex-col">
                                                 <div className="flex-col flex gap-3">
-                                                    {naturalColors.map((naturalColor)=>(
-                                                        <div className="flex gap-2 items-center" key={naturalColor.id}>
-                                                            <div className="flex gap-3 p-1 w-full items-center text-black dark:bg-gray-200 border rounded-sm">
-                                                                <span className="w-8 block h-7 rounded" style={{backgroundColor: naturalColor.value}}></span>
-                                                                <ColorPicker
-                                                                className="w-full amicolor-natural-picker flex-row"
-                                                                onChange={(rgba: number[]) => {
-                                                                    const [r, g, b, a] = rgba;
-                                                                    const hex = Color.rgb(r, g, b).hex();
-                                                                    // setNaturalColors(naturalColor);
-                                                                }}
-                                                            >
-                                                                <ColorPickerOutput />
-                                                                <ColorPickerFormat />
-                                                            </ColorPicker>
-                                                            </div>
-                                                            <Minus className="cursor-pointer" />
-                                                        </div>
-                                                    ))}
+                                                    <CardTitle className="text-xl mt-5">Primary</CardTitle>
+                                                    <MultiSelect>
+                                                        <MultiSelectTrigger className="w-full max-w-[400px]">
+                                                            <MultiSelectValue placeholder="Select Natural Colors" />
+                                                        </MultiSelectTrigger>
+                                                        <MultiSelectContent>
+                                                            {/* Items must be wrapped in a group for proper styling */}
+                                                            <MultiSelectGroup>
+                                                                {naturalColors.map((naturalColor)=> (
+                                                                    <MultiSelectItem key={naturalColor.id} value={naturalColor.name}>
+                                                                        <span className="h-5 w-5" style={{backgroundColor: naturalColor.value}}></span>
+                                                                        {naturalColor.name}
+                                                                    </MultiSelectItem>
+                                                                ))}
+                                                            </MultiSelectGroup>
+                                                        </MultiSelectContent>
+                                                    </MultiSelect>
+
+                                                    {/* <Separator className="mt-10 mb-8" /> */}
+                                                    <CardTitle className="text-xl mt-5">Natural</CardTitle>
+                                                    <MultiSelect>
+                                                        <MultiSelectTrigger className="w-full max-w-[400px]">
+                                                            <MultiSelectValue placeholder="Select Natural Colors" />
+                                                        </MultiSelectTrigger>
+                                                        <MultiSelectContent>
+                                                            {/* Items must be wrapped in a group for proper styling */}
+                                                            <MultiSelectGroup>
+                                                                {naturalColors.map((naturalColor)=> (
+                                                                    <MultiSelectItem key={naturalColor.id} value={naturalColor.name}>
+                                                                        <span className="h-5 w-5" style={{backgroundColor: naturalColor.value}}></span>
+                                                                        {naturalColor.name}
+                                                                    </MultiSelectItem>
+                                                                ))}
+                                                            </MultiSelectGroup>
+                                                        </MultiSelectContent>
+                                                    </MultiSelect>
                                                 </div>
-                                                
-                                                <Button className="mt-3">Add more color <Plus /></Button>
                                             </div>
                                         </div>
                                     </div>
@@ -800,7 +849,7 @@ export default function Page() {
                 </Card>
             </div>
             
-            {/* Step 3 */}
+            {/* Step 3 - Product Logo */}
             <div className="ac-setup ac-step-3 mt-7">
                 <Card className="py-2">
                     <Accordion
@@ -819,19 +868,26 @@ export default function Page() {
                                 <Separator />
                                 <CardContent>
                                     <div 
-                                        className="amicolor-upload h-50 border-2 border-dashed flex justify-center rounded-lg p-6 transition-all text-center items-center"
+                                        className="relative amicolor-upload min-h-50 border-2 border-dashed flex justify-center rounded-lg p-6 transition-all text-center items-center"
                                         onClick={()=>productLogoRef.current?.click()}
                                     >
-                                        <input ref={productLogoRef} onChange={(e)=>handleLogoChange(e, 'product')} type="file" accept="image/png, image/jpeg, image/jpg, image/webp" className="hidden" />
+                                        <input ref={productLogoRef} onChange={(e)=>handleLogoChange(e, 'product')} type="file" accept="image/png, image/jpeg, image/jpg, image/webp, image/avif"  className="hidden" />
                                         
                                         {productLogoPreview ? (
-                                            <div className="relative w-full h-48 flex items-center justify-center">
-                                                <Image
-                                                src={productLogoPreview}
-                                                alt="Logo Preview"
-                                                fill
-                                                className="object-contain rounded-md"
-                                                />
+                                            <>
+                                                <div className="w-full flex flex-row gap-2 justify-center flex-wrap">
+                                                    {productLogoFiles.map((productFile)=>(
+                                                        <div className="flex items-center justify-center border rounded-md p-1 bg-white">
+                                                            <Image
+                                                            src={URL.createObjectURL(productFile)}
+                                                            alt="Logo Preview"
+                                                            width={250}
+                                                            height={250}
+                                                            className=""
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -839,9 +895,9 @@ export default function Page() {
                                                     }}
                                                     className="absolute top-2 right-2 bg-black/60 text-white p-1 rounded-full hover:bg-black/80 transition cursor-pointer"
                                                 >
-                                                <X size={14} />
-                                            </button>
-                                        </div>
+                                                    <X size={14} />
+                                                </button>
+                                            </>
                                         ):(
                                             <div className="flex flex-col text-center justify-center items-center gap-1 cursor-pointer">
                                                 <UploadCloud className="text-center h-15 w-full" />
@@ -857,7 +913,7 @@ export default function Page() {
                 </Card>
             </div>
             
-            {/* Step 4 */}
+            {/* Step 4 - Product Sync */}
             <div className="ac-setup ac-step-4 mt-7">
                 <Card className="py-2">
                     <Accordion
@@ -927,8 +983,8 @@ export default function Page() {
                 </Card>
             </div>
 
-            {/* Step 5 */}
-            <div className="ac-setup ac-step-4 mt-7">
+            {/* Step 5 - Preparing Theme */}
+            <div className="ac-setup ac-step-4 mt-7" style={{ "--hoverColor": primaryColor } as React.CSSProperties}>
                 <Card className="py-2">
                     <Accordion
                         type="single"
@@ -963,7 +1019,7 @@ export default function Page() {
                                                         {/* Logo */}
                                                         <div className="flex items-center gap-3">
                                                             <Image
-                                                            src="/images/store-logo.webp"
+                                                            src={storeLogoPreview}
                                                             alt="Marshall School Store"
                                                             width={200}
                                                             height={75}
@@ -972,20 +1028,20 @@ export default function Page() {
 
                                                         {/* Nav Links */}
                                                         <nav className="hidden md:flex items-center gap-8 font-medium text-gray-700">
-                                                            <a href="#" className="hover:text-[#6A0027]">MEN</a>
-                                                            <a href="#" className="hover:text-[#6A0027]">WOMEN</a>
-                                                            <a href="#" className="hover:text-[#6A0027]">YOUTH</a>
-                                                            <a href="#" className="hover:text-[#6A0027]">UNISEX</a>
-                                                            <a href="#" className="hover:text-[#6A0027]">ACCESSORIES</a>
+                                                            <a href="#" className="hover:text-[var(--hoverColor)]">MEN</a>
+                                                            <a href="#" className="hover:text-[var(--hoverColor)]">WOMEN</a>
+                                                            <a href="#" className="hover:text-[var(--hoverColor)]">YOUTH</a>
+                                                            <a href="#" className="hover:text-[var(--hoverColor)]">UNISEX</a>
+                                                            <a href="#" className="hover:text-[var(--hoverColor)]">ACCESSORIES</a>
                                                         </nav>
 
                                                         {/* Icons */}
                                                         <div className="flex items-center gap-4 text-gray-700">
-                                                            <Search size={20} className="cursor-pointer hover:text-[#6A0027]" />
-                                                            <User size={20} className="cursor-pointer hover:text-[#6A0027]" />
-                                                            <Heart size={20} className="cursor-pointer hover:text-[#6A0027]" />
+                                                            <Search size={20} className="cursor-pointer hover:text-[var(--hoverColor)]" />
+                                                            <User size={20} className="cursor-pointer hover:text-[var(--hoverColor)]" />
+                                                            <Heart size={20} className="cursor-pointer hover:text-[var(--hoverColor)]" />
                                                             <div className="relative">
-                                                            <ShoppingBag size={20} className="cursor-pointer hover:text-[#6A0027]" />
+                                                            <ShoppingBag size={20} className="cursor-pointer hover:text-[var(--hoverColor)]" />
                                                             <span className="absolute -top-2 -right-2 text-[10px] text-white rounded-full px-1.5 py-0.5" style={{background: primaryColor}}>0</span>
                                                             </div>
                                                         </div>
@@ -1004,7 +1060,7 @@ export default function Page() {
                                                                     Gear is <br /> Now Available!
                                                                 </h1>
                                                                 <Button
-                                                                className={`mt-5 bg-black hover:bg-[#6A0027] text-white text-sm font-semibold px-6 py-3 rounded-none`}
+                                                                className={`mt-5 bg-black text-white text-sm font-semibold px-6 py-3 rounded-none hover:bg-[var(--hoverColor)]`}
                                                                 >
                                                                     SHOP NOW
                                                                 </Button>
@@ -1025,7 +1081,7 @@ export default function Page() {
                                                         </div>
 
                                                         {/* Decorative Stripes */}
-                                                        <div className="absolute bottom-0 left-0 w-15 h-15 md:w-40 md:h-40 bg-[repeating-linear-gradient(45deg,#6A0027,#6A0027_5px,transparent_5px,transparent_10px)] opacity-60"></div>
+                                                        <div className={`absolute bottom-0 left-0 w-15 h-15 md:w-40 md:h-40 bg-[repeating-linear-gradient(45deg, ${primaryColor}, ${primaryColor}_5px,transparent_5px,transparent_10px)] opacity-60`}></div>
                                                     </section>
                                                 </div>
                                             </div>
