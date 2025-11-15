@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Toaster } from "sonner"
 
 import {
   Field,
@@ -45,7 +46,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2">
@@ -89,17 +96,12 @@ export default function RootLayout({
                 </div>
               </header>
               <div className="flex flex-1 flex-col gap-4 p-4 pt-0 ITSMY mt-5">
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="system"
-                  enableSystem
-                  disableTransitionOnChange
-                > 
                   {children}
-                </ThemeProvider>
               </div>
             </SidebarInset>
           </SidebarProvider>
+          <Toaster position="top-center" />
+        </ThemeProvider>
       </body>
     </html>
     

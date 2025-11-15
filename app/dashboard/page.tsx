@@ -74,7 +74,7 @@ export default function Page() {
             <CardHeader>
               <CardTitle className="alight-center text-center">Total Products</CardTitle>
               <CardDescription className="mt-5">
-                <ProductSyncGauge />
+                <RegisteredSchools />
               </CardDescription>
             </CardHeader>
           </Card> 

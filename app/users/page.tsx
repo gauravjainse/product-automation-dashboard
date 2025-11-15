@@ -33,12 +33,66 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import {
+  Field,
+  FieldGroup,
+  FieldError,
+  FieldLabel,
+  FieldSet,
+  FieldLegend,
+  FieldTitle,
+  FieldContent,
+} from "@/components/ui/field";
+
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group"
+
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { Controller, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { toast } from "sonner"
+
+const userTypes = [
+  {
+    id: "superadmin",
+    label: "Super Admin",
+    value: "superadmin",
+  },
+  {
+    id: "districtadmin",
+    label: "District Admin",
+    value: "districtadmin",
+  },
+  {
+    id: "schooladmin",
+    label: "School Admin",
+    value: "schooladmin",
+  },
+  {
+    id: "organizationadmin",
+    label: "Organization Admin",
+    value: "organizationadmin",
+  },
+] as const
 
 const data: Users[] = [
   {
     id: "m5gr84i9",
+    name: "David",
     linkedstore: "DR. Lopez Academy",
     storeurl: "https://lopezacademy.oxnardsdstore.org/",
     usertype: "Super Admin",
@@ -47,6 +101,7 @@ const data: Users[] = [
   },
   {
     id: "3u1reuv4",
+    name: "Lopez",
     linkedstore: "Marshall Schools",
     storeurl: "https://marshall.oxnardsdstore.org/",
     usertype: "District Admin",
@@ -55,6 +110,7 @@ const data: Users[] = [
   },
   {
     id: "derv1ws0",
+    name: "Daniel",
     linkedstore: "Brekke School",
     storeurl: "https://www.brekke.oxnardsdstore.org/",
     usertype: "School Admin",
@@ -63,1042 +119,21 @@ const data: Users[] = [
   },
   {
     id: "5kma53ae",
+    name: "Reah",
     linkedstore: "Calsa School",
     storeurl: "https://calsastore.org/",
     usertype: "District Admin",
     status: "Active",
     email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },{
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
-  {
-    id: "m5gr84i9",
-    linkedstore: "DR. Lopez Academy",
-    storeurl: "https://lopezacademy.oxnardsdstore.org/",
-    usertype: "Super Admin",
-    status: "Active",
-    email: "lopezacademy@oxnardsdstore.org",
-  },
-  {
-    id: "3u1reuv4",
-    linkedstore: "Marshall Schools",
-    storeurl: "https://marshall.oxnardsdstore.org/",
-    usertype: "District Admin",
-    status: "Inactive",
-    email: "marshall@oxnardsdstore.org",
-  },
-  {
-    id: "derv1ws0",
-    linkedstore: "Brekke School",
-    storeurl: "https://www.brekke.oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Inactive",
-    email: "brekke@oxnardsdstore.org",
-  },
-  {
-    id: "5kma53ae",
-    linkedstore: "Calsa School",
-    storeurl: "https://calsastore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@calsastore.org",
-  },
-  {
-    id: "bhqecj4p",
-    linkedstore: "Employee Store",
-    storeurl: "https://oxnardsdstore.org/",
-    usertype: "School Admin",
-    status: "Active",
-    email: "info@oxnardsdstore.org",
-  },
-  {
-    id: "fttgcj4p",
-    linkedstore: "Santa Rosa City School",
-    storeurl: "https://www.srcschoolsstore.org/",
-    usertype: "District Admin",
-    status: "Active",
-    email: "info@srcschoolsstore.org",
-  },
+  }
 ]
 
 export type Users = {
     id: string,
+    name: string,
     linkedstore: string,
     storeurl: string,
-    usertype: "Super Admin" | "School Admin" | "District Admin"
+    usertype: "Super Admin" | "School Admin" | "District Admin" | "Organization Admin"
     status: "Active" | "Inactive"
     email: string
 }
@@ -1125,6 +160,23 @@ export const columns: ColumnDef<Users>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("name")}</div>
+    ),
   },
   {
     accessorKey: "linkedstore",
@@ -1230,14 +282,11 @@ export const columns: ColumnDef<Users>[] = [
 export default function Page() {
 
     const [globalFilter, setGlobalFilter] = React.useState()
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const table = useReactTable({
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
+    const table = useReactTable({
     data,
     columns,
     onSortingChange: setSorting,
@@ -1249,20 +298,19 @@ export default function Page() {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
-      sorting,
-      globalFilter,
+    sorting,
+    globalFilter,
     //   columnFilters,
-      columnVisibility,
-      rowSelection,
+    columnVisibility,
+    rowSelection,
     },
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: "includesString",
-  })
+    })
 
     // Numeric Pagination
     const pageCount = table.getPageCount()
     const currentPage = table.getState().pagination.pageIndex + 1
-
     const pages = Array.from({ length: pageCount }, (_, i) => i + 1)
 
     // Optional: limit number of pages shown (for long lists)
@@ -1271,50 +319,239 @@ export default function Page() {
         Math.min(currentPage + 2, pageCount)
     )
 
+    const formSchema = z.object({
+      name: z
+          .string()
+          .min(3, "Store Name must be at least 3 characters."),
+      // linkedstore: z
+      //     .string()
+      //     .min(3, "Store Name must be at least 3 characters."),
+      email: z
+          .string()
+          .min(3, "Please use a valid email address"),
+      password: z
+          .string()
+          .min(6, "Password must be at least of 6 characters"),
+      // status: z
+      //     .string()
+      //     .min(3, "Store Name must be at least 3 characters."),
+      usertype: z
+          .string()
+          .min(6, "User type should either be Super, School, District or Organization"),
+      
+      // linkedstore: z
+      //     .string()
+      //     .min(6, "Store type should either be District or School"),
+      // storeurl: z
+      //     .string()
+      //     .optional(),
+      // usertype: z
+      //     .string()
+      //     .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
+      // status: z
+      //     .string()
+      //     .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
+      // email: z
+      //     .string()
+      //     .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
+      }
+    )
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            usertype: ""
+        },
+    })
+
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        console.log('onSubmit', data)
+        toast(`New user has been created`)
+    }
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        {/* <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        /> */}
-        <Input
+      <div className="flex items-center md:justify-between justify-end py-4 flex-wrap gap-4">
+        <div className="md:max-w-sm w-full">
+          <Input
             placeholder="Search by email, status, or user type..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="max-w-sm"
-            />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            className="md:max-w-sm w-full"
+          />
+        </div>
+        <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Dialog>
+            <DialogTrigger asChild>
+                <Button className="">
+                  Add New User  
+                </Button>
+            </DialogTrigger>
+            
+            <form id="form-rhf-input" onSubmit={form.handleSubmit(onSubmit)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Create User</DialogTitle>
+                        <DialogDescription>Add user details and click Save when you&apos;re done.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <FieldGroup>
+                      <Controller 
+                        name="name"
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="amicolor-name">
+                                    User Name
+                                </FieldLabel>
+                                <Input
+                                    {...field}
+                                    id="amicolor-name"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Abc"
+                                    autoComplete="name"
+                                />
+                                {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                )}
+                            </Field>
+                        )}
+                      />
+                    </FieldGroup>
+
+                    <FieldGroup>
+                      <Controller 
+                        name="email"
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="amicolor-email">
+                                    Email
+                                </FieldLabel>
+                                <Input
+                                    {...field}
+                                    id="amicolor-email"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="abc@domain.com"
+                                    autoComplete="email"
+                                    type="email"
+                                />
+                                {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                )}
+                            </Field>
+                        )}
+                      />
+                    </FieldGroup>
+
+                    <FieldGroup>
+                      <Controller 
+                        name="password"
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="amicolor-password">
+                                    Password
+                                </FieldLabel>
+                                <Input
+                                    {...field}
+                                    id="amicolor-password"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="pass123"
+                                    type="password"
+                                />
+                                {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                )}
+                            </Field>
+                        )}
+                      />
+                    </FieldGroup>
+
+                    <FieldGroup>
+                      <Controller
+                      name="usertype"
+                      control={form.control}
+                      render={({ field, fieldState }) => {
+                          const isInvalid = fieldState.invalid
+                          return (
+                          <FieldSet data-invalid={isInvalid}>
+                              <FieldLegend variant="label">User Type</FieldLegend>
+                              <RadioGroup
+                                  name={field.name}
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                  aria-invalid={isInvalid}
+                                  className="grid grid-cols-2 gap-4"
+                              >
+                              {userTypes.map((userType)=>(
+                                  <FieldLabel htmlFor={userType.id} className="">
+                                      <Field orientation="horizontal">
+                                          <FieldContent>
+                                              <FieldTitle>{userType.label}</FieldTitle>
+                                          </FieldContent>
+                                          <RadioGroupItem
+                                              style={{width:"15px", height: "15px", top: "1px"}}
+                                              value={userType.value}
+                                              id={userType.id}
+                                              className="relative"
+                                          />
+                                      </Field>
+                                  </FieldLabel>
+                              ))}
+
+                              </RadioGroup>
+                              {isInvalid && <FieldError errors={[fieldState.error]} />}
+                          </FieldSet>
+                          )
+                      }}
+                      />
+                  </FieldGroup>
+
+                    <Field orientation="horizontal">
+                        <Button type="button" variant="outline" onClick={() => form.reset()}>
+                            Reset
+                        </Button>
+                        <Button type="submit" form="form-rhf-input">
+                            Save
+                        </Button>
+                    </Field>
+                </DialogContent>
+            </form>
+          </Dialog>
+        </div>
       </div>
+
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -1366,67 +603,66 @@ export default function Page() {
         </Table>
       </div>
 
-    <div className="flex flex-wrap items-center justify-between gap-4 py-4 mt-5">
-        {/* Per Page */}
-        <div className="flex items-center gap-4 items-center">
-            <div className="text-sm text-muted-foreground">
-                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </div>
-            <div>
-                |
-            </div>
-            <div>
-                <span className="text-sm text-muted-foreground">Rows per page:</span>
-                <select
-                className="border rounded-md px-2 py-1 text-sm"
-                value={table.getState().pagination.pageSize}
-                onChange={(e) => table.setPageSize(Number(e.target.value))}
-                >
-                {[5, 10, 20, 50].map((size) => (
-                    <option key={size} value={size}>
-                    {size}
-                    </option>
-                ))}
-                </select>
-            </div>
-        </div>
-        {/* Numeric Pagination */}
-        <div className="flex items-center justify-center gap-2">
-            <Button
-            variant="outline"
-            // size="icon"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            >
-            <ChevronLeft className="h-4 w-4" />Previous
-            </Button>
+      <div className="flex flex-wrap items-center justify-between gap-4 py-4 mt-5">
+          {/* Per Page */}
+          <div className="flex items-center gap-4 items-center">
+              <div className="text-sm text-muted-foreground">
+                  Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+              </div>
+              <div>
+                  |
+              </div>
+              <div>
+                  <span className="text-sm text-muted-foreground">Rows per page:</span>
+                  <select
+                  className="border rounded-md px-2 py-1 text-sm"
+                  value={table.getState().pagination.pageSize}
+                  onChange={(e) => table.setPageSize(Number(e.target.value))}
+                  >
+                  {[5, 10, 20, 50].map((size) => (
+                      <option key={size} value={size}>
+                      {size}
+                      </option>
+                  ))}
+                  </select>
+              </div>
+          </div>
+          {/* Numeric Pagination */}
+          <div className="flex items-center justify-center gap-2">
+              <Button
+              variant="outline"
+              // size="icon"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              >
+              <ChevronLeft className="h-4 w-4" />
+              </Button>
 
-            {visiblePages.map((page) => (
-            <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => table.setPageIndex(page - 1)}
-            >
-                {page}
-            </Button>
-            ))}
+              {visiblePages.map((page) => (
+              <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => table.setPageIndex(page - 1)}
+              >
+                  {page}
+              </Button>
+              ))}
 
-            {pageCount > visiblePages[visiblePages.length - 1] && (
-            <span className="text-muted-foreground px-2">...</span>
-            )}
+              {pageCount > visiblePages[visiblePages.length - 1] && (
+              <span className="text-muted-foreground px-2">...</span>
+              )}
 
-            <Button
-            variant="outline"
-            // size="icon"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            >
-            Next<ChevronRight className="h-4 w-4" />
-            </Button>
-        </div>
-    </div>
-
-    </div>
+              <Button
+              variant="outline"
+              // size="icon"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              >
+              <ChevronRight className="h-4 w-4" />
+              </Button>
+          </div>
+      </div>
+  </div>
   )
 }
