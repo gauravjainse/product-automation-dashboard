@@ -1,24 +1,23 @@
+"use client";
+
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image";
 
-
-import ProductSyncGauge from "@/components/charts/ProductSyncGauge";
 import FundRaisingMeter from "@/components/charts/FundRaisingMeter";
 import RegisteredSchools from "@/components/charts/RegisteredSchools";
 import RevenueDonut from "@/components/charts/RevenueDonut";
 
-import { MoveUp, Search } from "lucide-react";
+import { MoveUp, Search, Target } from "lucide-react";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import PieChartWithNeedle from "@/components/charts/FundRaisingMeter";
 
 const schools = [
   {
@@ -68,9 +67,9 @@ const schools = [
 export default function Page() {
   return (
     <div>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-4 items-stretch">
         <div>
-          <Card className="w-full max-w-sm">
+          <Card className="w-full max-w-sm h-full">
             <CardHeader>
               <CardTitle className="alight-center text-center">Total Products</CardTitle>
               <CardDescription className="mt-5">
@@ -80,7 +79,7 @@ export default function Page() {
           </Card> 
         </div>
         <div>
-          <Card className="w-full max-w-sm">
+          <Card className="w-full max-w-sm h-full">
             <CardHeader>
               <CardTitle className="alight-center text-center">Registered Districts</CardTitle>
               <CardDescription className="mt-5">
@@ -90,7 +89,7 @@ export default function Page() {
           </Card> 
         </div>
         <div>
-          <Card className="w-full max-w-sm">
+          <Card className="w-full max-w-sm h-full">
             <CardHeader>
               <CardTitle className="alight-center text-center">Registered Schools</CardTitle>
               <CardDescription className="mt-5">
@@ -100,11 +99,14 @@ export default function Page() {
           </Card> 
         </div>
         <div>
-          <Card className="w-full max-w-sm">
-            <CardHeader>
+          <Card className="w-full max-w-sm h-full">
+            <CardHeader className="h-full">
               <CardTitle className="alight-center text-center">Fund Raising Meter</CardTitle>
-              <CardDescription className="mt-5">
-                <FundRaisingMeter />
+              <CardDescription className="mt-5 justify-center">
+                <PieChartWithNeedle isAnimationActive = {true} data = {{
+                  "target": 3000,
+                  "achieve": 1634
+                }} />
               </CardDescription>
             </CardHeader>
           </Card> 
