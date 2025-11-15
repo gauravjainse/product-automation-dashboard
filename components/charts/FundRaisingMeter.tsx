@@ -1,43 +1,74 @@
-"use client";
+import { Pie, PieChart, PieProps, Tooltip } from 'recharts';
+import { PieSectorDataItem } from 'recharts/types/polar/Pie';
 
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { GraduationCap, Receipt } from "lucide-react";
+const NEEDLE_BASE_RADIUS_PX = 5;
+const NEEDLE_COLOR = '#d0d000';
+const Needle = ({ cx, cy, midAngle, innerRadius, outerRadius }: PieSectorDataItem) => {
+  const needleBaseCenterX = cx;
+  const needleBaseCenterY = cy;
+  
+  const needleLength = innerRadius + (outerRadius - innerRadius) / 2;
 
-const data = [
-  { value: 70 },
-  { value: 30 },
-];
-const COLORS = ["#3b82f6", "#E5E7EB"];
-
-export default function FundRaisingMeter() {
   return (
-    <div className="h-56 relative">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            dataKey="value"
-            startAngle={180}
-            endAngle={-180}
-            innerRadius="80%"
-            outerRadius="100%"
-            stroke="none"
-            cornerRadius={50}
-          >
-            {data.map((_, i) => (
-              <Cell key={i} fill={COLORS[i]} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
+    <g>
+      <circle
+        cx={needleBaseCenterX}
+        cy={needleBaseCenterY}
+        r={NEEDLE_BASE_RADIUS_PX}
+        fill={NEEDLE_COLOR}
+        stroke="none"
+      />
+      <path
+        d={`M${needleBaseCenterX},${needleBaseCenterY}l${needleLength},0`}
+        strokeWidth={2}
+        stroke={NEEDLE_COLOR}
+        fill={NEEDLE_COLOR}
+        style={{
+          transform: `rotate(-${midAngle}deg)`,
+          transformOrigin: `${needleBaseCenterX}px ${needleBaseCenterY}px`,
+        }}
+      />
+    </g>
+  );
+};
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="bg-blue-100 p-3 rounded-full">
-          <Receipt className="text-blue-600" />
-        </div>
-        <p className="text-2xl font-bold mt-2">$50,520</p>
-        <p className="text-muted-foreground text-sm">Fund Raised</p>
-      </div>
-    </div>
+export default function PieChartWithNeedle( {data, isAnimationActive = true}: {data: {target: number, achieve: number}, isAnimationActive: boolean}) {
+
+  const {target, achieve} = data;
+
+  const targetValue =  parseInt(((achieve / target) * 100).toFixed(2));
+  const remaining = 100 - targetValue;
+  
+  const chartData = [
+    { name: 'A', value: targetValue, fill: '#00ff00' },
+    { name: 'C', value: remaining, fill: '#626262ff' },
+  ];
+
+  const HalfPie = (props: PieProps) => (
+    <Pie
+      {...props}
+      stroke="none"
+      dataKey="value"
+      startAngle={180}
+      endAngle={0}
+      data={chartData}
+      cx={100}
+      cy={100}
+      innerRadius={50}
+      outerRadius={100}
+    />
+  );
+
+  return (
+    <>
+      <PieChart width={210} height={120} style={{ margin: '0 auto' }}>
+        <HalfPie isAnimationActive={isAnimationActive} />
+        <HalfPie isAnimationActive={isAnimationActive} activeShape={Needle} />
+        <Tooltip defaultIndex={0} content={() => null} active />
+      </PieChart>
+      <h2 className="mt-2 text-center text-card-foreground text-3xl font-bold text-sm">
+          ${achieve} / ${target}
+      </h2>
+    </>
   );
 }
