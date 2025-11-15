@@ -1,32 +1,30 @@
 "use client";
-
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+
 import {
     Field,
     FieldGroup,
-    
     FieldContent,
-    FieldDescription,
     FieldError,
-    
     FieldLabel,
     FieldLegend,
-    FieldSeparator,
     FieldSet,
     FieldTitle,
 } from "@/components/ui/field";
+
 import {
   RadioGroup,
   RadioGroupItem,
 } from "@/components/ui/radio-group"
+
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
     Command,
@@ -35,20 +33,17 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator,
-    CommandShortcut,
 } from "@/components/ui/command"
 
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+
 import {
   Empty,
   EmptyContent,
@@ -67,14 +62,27 @@ import {
   MultiSelectValue,
 } from "@/components/ui/multi-select";
 
-// Form
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
-// End Form
 
-import { ArrowRightIcon, Box, Building, Circle, CircleCheck, Currency, Download, GraduationCap, Heart, Minus, Plus, School, Search, ShoppingBag, UploadCloud, User, X, Check, ChevronsUpDown } from "lucide-react";
+import { 
+    Building, 
+    Circle, 
+    CircleCheck, 
+    Download, 
+    GraduationCap, 
+    Heart, 
+    School, 
+    Search, 
+    ShoppingBag, 
+    UploadCloud, 
+    User, 
+    X, 
+    Check, 
+    ChevronsUpDown
+} from "lucide-react";
 
 import {
   Accordion,
@@ -96,11 +104,8 @@ import {
 
 import Color from 'color';
 import { Button } from "@/components/ui/button";
-import ProductSyncGauge from "@/components/charts/ProductSyncGauge";
-import ProductSyncProgress from "@/components/charts/ProductSync";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Progress } from "@/components/ui/progress";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import {
@@ -109,7 +114,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-// Form
 const storeTypes = [
   {
     id: "district",
@@ -127,7 +131,6 @@ const storeTypes = [
     value: "organization",
   },
 ] as const
-// End Form
 
 const schools = [
   {
@@ -256,7 +259,6 @@ export default function Page() {
     }
 
     const handleLogoRemove = (logoType:string) => {
-
         if(logoType == 'store') {
             setStoreLogoFile(null);
             setStoreLogoPreview(null);
@@ -369,23 +371,22 @@ export default function Page() {
                     ];
 
     const formSchema = z.object({
-                        storename: z
-                            .string()
-                            .min(3, "Store Name must be at least 3 characters."),
-                        storeurl: z
-                            .url("Store URL must be in the format - https://admin.shopify.com/store/abc")
-                            .min(10),
-                        storetype: z
-                            .string()
-                            .min(6, "Store type should either be District or School"),
-                        linkeddistrict: z
-                            .string()
-                            .optional(),
-                        authtoken: z
-                            .string()
-                            .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
-                    }
-                )
+        storename: z
+            .string()
+            .min(3, "Store Name must be at least 3 characters."),
+        storeurl: z
+            .url("Store URL must be in the format - https://admin.shopify.com/store/abc")
+            .min(10),
+        storetype: z
+            .string()
+            .min(6, "Store type should either be District or School"),
+        linkeddistrict: z
+            .string()
+            .optional(),
+        authtoken: z
+            .string()
+            .min(5, "Auth token must be in the format - sha_dhgefbvgbejgvevhcbwfvjh"),
+    })
     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),

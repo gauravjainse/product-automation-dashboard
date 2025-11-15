@@ -12,7 +12,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Copy, Edit, MoreHorizontal, OctagonMinus, PanelTopInactive, SeparatorVertical, Trash } from "lucide-react"
+import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Copy, Edit, MoreHorizontal, OctagonMinus, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -66,6 +66,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { toast } from "sonner"
 
+import ConfirmBox from "@/components/confirmbox/ConfirmBox"
+
 const userTypes = [
   {
     id: "superadmin",
@@ -98,6 +100,7 @@ const data: Users[] = [
     usertype: "Super Admin",
     status: "Active",
     email: "lopezacademy@oxnardsdstore.org",
+    password: "T$e#hsdh@456"
   },
   {
     id: "3u1reuv4",
@@ -107,6 +110,7 @@ const data: Users[] = [
     usertype: "District Admin",
     status: "Inactive",
     email: "marshall@oxnardsdstore.org",
+    password: "T$e#hsdh@456"
   },
   {
     id: "derv1ws0",
@@ -116,6 +120,7 @@ const data: Users[] = [
     usertype: "School Admin",
     status: "Inactive",
     email: "brekke@oxnardsdstore.org",
+    password: "T$e#hsdh@456"
   },
   {
     id: "5kma53ae",
@@ -125,6 +130,7 @@ const data: Users[] = [
     usertype: "District Admin",
     status: "Active",
     email: "info@calsastore.org",
+    password: "T$e#hsdh@456"
   }
 ]
 
@@ -136,156 +142,219 @@ export type Users = {
     usertype: "Super Admin" | "School Admin" | "District Admin" | "Organization Admin"
     status: "Active" | "Inactive"
     email: string
+    password: string
 }
 
-export const columns: ColumnDef<Users>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("name")}</div>
-    ),
-  },
-  {
-    accessorKey: "linkedstore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Linked Store
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const linkedstore = row.getValue("linkedstore")
-      const payment = row.original;
+const userDeactivate = (id: string, name: string) => {
+
+  toast.promise(
+    new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const success = true
+
+          if(success) resolve(true)
+          else reject(false)
+        }, 1200)
+    }),
+    {
+        loading: `Deactivating user..`,
+        success: `User ${name} has been deactivated`, 
+        error: `Unable to deactivated user`
+    }
+)
 
 
-      return <Link target="_blank" href={payment?.storeurl}>{linkedstore}</Link>
-    },
-  },
-  {
-    accessorKey: "usertype",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          User Type
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("usertype")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className=""><Badge variant={ row.getValue("status") == 'Inactive' ? "destructive": "secondary"}>{row.getValue("status")}</Badge></div>,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.storeurl)}
-            >
-              <Copy /> Copy Store URL
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem><OctagonMinus />Deactivate</DropdownMenuItem>
-            <DropdownMenuItem><Edit/> Edit</DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem><Trash/>Delete User</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
+}
 
 export default function Page() {
+  
+  const [globalFilter, setGlobalFilter] = React.useState()
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [showConfirm, setShowConfirm] = React.useState(false)
+  
+    const columns: ColumnDef<Users>[] = [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorKey: "name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Name
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => (
+          <div className="capitalize">{row.getValue("name")}</div>
+        ),
+      },
+      {
+        accessorKey: "linkedstore",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Linked Store
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => {
+          const linkedstore = row.getValue("linkedstore")
+          const payment = row.original;
+    
+    
+          return <Link target="_blank" href={payment?.storeurl}>{linkedstore}</Link>
+        },
+      },
+      {
+        accessorKey: "usertype",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              User Type
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => (
+          <div className="capitalize">{row.getValue("usertype")}</div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Email
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Status
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => <div className=""><Badge variant={ row.getValue("status") == 'Inactive' ? "destructive": "secondary"}>{row.getValue("status")}</Badge></div>,
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const payment = row.original
+          const copyContent = {
+            email: row.getValue("email"),
+            password: payment?.password
+          };
+          return (
+            
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem
+                      onClick={async() => {
+                        try {
+                          await navigator.clipboard.writeText(
+                            `Email: ${copyContent.email} and Password: ${copyContent.password}`
+                          )
+                          toast.success("Copied to clipboard")
+                        } catch(err) {
+                          toast.error("Failed to copy")
+                        }
+                      }}
+                      >
+                    <Copy /> Copy Store URL
+                  </DropdownMenuItem>
+      
+                  <DropdownMenuItem onClick={() => {
+                    userDeactivate(payment?.id, payment?.name)
+                  }}>
+                    <OctagonMinus />Deactivate
+                  </DropdownMenuItem>
+      
+                  <DropdownMenuItem>
+                    <Edit/> Edit
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem onClick={()=>setShowConfirm(true)}>
+                    <Trash /> Delete
+                  </DropdownMenuItem>
+      
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <ConfirmBox
+                open={showConfirm}
+                onOpenChange={setShowConfirm}
+                onConfirm={() => deleteConfirm(payment?.id)}
+                data={{
+                  title: "Are you absolutely sure?",
+                  description: "This action cannot be undone. This will permanently delete the account.",
+                  buttonTitle: "Continue",
+                }}
+              />
+            </>
+          )
+        },
+      },
+    ]
 
-    const [globalFilter, setGlobalFilter] = React.useState()
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
     const table = useReactTable({
     data,
     columns,
@@ -370,6 +439,26 @@ export default function Page() {
     function onSubmit(data: z.infer<typeof formSchema>) {
         console.log('onSubmit', data)
         toast(`New user has been created`)
+    }
+
+    const deleteConfirm = (id: string) => {
+        console.log('ID', id)
+
+        toast.promise(
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                        const success = true
+
+                        if(success) resolve(true)
+                        else reject(false)
+                }, 1200)
+            }),
+            {
+                loading: `Deleting user..`,
+                success: `User has been deleted - ${id}`, 
+                error: `Unable to delete user`
+            }
+        )
     }
 
   return (
@@ -515,7 +604,7 @@ export default function Page() {
                                   className="grid grid-cols-2 gap-4"
                               >
                               {userTypes.map((userType)=>(
-                                  <FieldLabel htmlFor={userType.id} className="">
+                                  <FieldLabel key={userType.id} htmlFor={userType.id} className="">
                                       <Field orientation="horizontal">
                                           <FieldContent>
                                               <FieldTitle>{userType.label}</FieldTitle>
