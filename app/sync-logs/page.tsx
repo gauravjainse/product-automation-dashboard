@@ -19,9 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -33,21 +30,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 
 import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
 import { toast } from "sonner"
+import ConfirmBox from "@/components/confirmbox/ConfirmBox"
 
 const data: Logs[] = [
     {
@@ -136,7 +122,6 @@ const data: Logs[] = [
     }
 ]
 
-
 export type Logs = {
     id: string,
     lastsync: string,
@@ -147,7 +132,7 @@ export type Logs = {
     }
 }
 
-const onConfirm = (id: string) => {
+const deleteConfirm = (id: string) => {
     console.log('ID', id)
 
     toast.promise(
@@ -160,128 +145,123 @@ const onConfirm = (id: string) => {
             }, 1200)
         }),
         {
-            loading: "Deleting user",
-            success: "User has been deleted", 
-            error: "Unable to delete user"
+            loading: `Deleting user..`,
+            success: `User has been deleted - ${id}`, 
+            error: `Unable to delete user`
         }
     )
 
 }
+
+import { useEffect, useRef, useState } from "react";
 
 export default function Page() {
 
     const [expandedRow, setExpandedRow] = React.useState<string | null>(null);
 
     const columns: ColumnDef<Logs>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-        <Checkbox
-            checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-        />
-        ),
-        cell: ({ row }) => (
-        <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-        />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "lastsync",
-        header: ({ column }) => {
-        return (
-            <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-            Last Sync
-            <ArrowUpDown />
-            </Button>
-        )
+        {
+            id: "select",
+            header: ({ table }) => (
+            <Checkbox
+                checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+            ),
+            cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+            ),
+            enableSorting: false,
+            enableHiding: false,
         },
-        cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("lastsync")}</div>
-        ),
-    },
-    {
-        accessorKey: "description",
-        header: ({ column }) => {
-        return (
-            <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-            Description
-            <ArrowUpDown />
-            </Button>
-        )
-        },
-        cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("description")}</div>
-        ),
-    },
-    {
-        accessorKey: "status",
-        header: ({ column }) => {
-        return (
-            <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-            Status
-            <ArrowUpDown />
-            </Button>
-        )
-        },
-        cell: ({ row }) => <div className=""><Badge variant={ row.getValue("status") == 'Error' ? "destructive": "secondary"}>{row.getValue("status")}</Badge></div>,
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const log = row.original;
+        {
+            accessorKey: "lastsync",
+            header: ({ column }) => {
             return (
-            <div className="flex gap-2">
                 <Button
-                    variant="outline"
-                    onClick={() =>
-                        setExpandedRow((prev) => (prev === log.id ? null : log.id))
-                    }
-                    >
-                    {expandedRow === log.id ? <ChevronUp />: <ChevronDown />}
-                    Details
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                Last Sync
+                <ArrowUpDown />
                 </Button>
-
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant={"destructive"}><Trash className="mr-2" />Delete</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete user account.
-                        </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onConfirm(log.id)}>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </div>
-            );
+            )
+            },
+            cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("lastsync")}</div>
+            ),
         },
-    },
+        {
+            accessorKey: "description",
+            header: ({ column }) => {
+            return (
+                <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                Description
+                <ArrowUpDown />
+                </Button>
+            )
+            },
+            cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("description")}</div>
+            ),
+        },
+        {
+            accessorKey: "status",
+            header: ({ column }) => {
+            return (
+                <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                Status
+                <ArrowUpDown />
+                </Button>
+            )
+            },
+            cell: ({ row }) => <div className=""><Badge variant={ row.getValue("status") == 'Error' ? "destructive": "secondary"}>{row.getValue("status")}</Badge></div>,
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const log = row.original;
+                return (
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() =>
+                            setExpandedRow((prev) => (prev === log.id ? null : log.id))
+                        }
+                        >
+                        {expandedRow === log.id ? <ChevronUp />: <ChevronDown />}
+                        Details
+                    </Button>
+
+                    <ConfirmBox 
+                        onConfirm={()=>deleteConfirm(log.id)}
+                        data={{
+                            title:"Are you absolutely sure?",
+                            description: "This action cannot be undone. This will permanently delete user account.",
+                            buttonTitle: "Continue" 
+                        }}
+                    >
+                        <Button variant={"destructive"}><Trash className="mr-2" />Delete</Button>
+                    </ConfirmBox>
+                </div>
+                );
+            },
+        },
     ]
 
     const [globalFilter, setGlobalFilter] = React.useState()
